@@ -16,6 +16,11 @@ Tech Stack
 •Matplotlib
 •Streamlit
 
+Project Structure
+├── project.py          # ML model and prediction system
+├── dash.py             # Streamlit dashboard
+├── health_data.csv     # Simulated patient data
+
 Run the Project
 pip install pandas numpy matplotlib scikit-learn streamlit
 python project.py
