@@ -1,0 +1,12 @@
+import subprocess
+import sys
+
+print("\nRunning data generation...\n")
+
+subprocess.run([sys.executable, "project"])
+
+input("\nPress ENTER to open dashboard...")
+
+print("\nStarting dashboard...\n")
+
+subprocess.run(["streamlit", "run", "dash.py"])

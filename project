@@ -1,0 +1,59 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
+
+print("\n--- Smart Health Monitoring System ---\n")
+
+data = []
+for t in range(1, 25): 
+    heart = np.random.randint(60, 120)
+    spo2 = np.random.randint(90, 100)
+    temp = round(np.random.uniform(36, 39), 1)
+    
+    data.append([t, heart, spo2, temp])
+
+df = pd.DataFrame(data, columns=["Time", "HeartRate", "SpO2", "Temperature"])
+
+df.to_csv("health_data.csv", index=False)
+print("Data generated and saved!\n")
+
+df.drop_duplicates(inplace=True)
+df["HeartRate"] = df["HeartRate"].clip(50, 130)
+df["SpO2"] = df["SpO2"].clip(85, 100)
+
+df["HealthScore"] = df["HeartRate"] + df["Temperature"] - df["SpO2"]
+
+X = df[["Time"]]
+y = df["HeartRate"]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+mae = mean_absolute_error(y_test, y_pred)
+print(f"Model Accuracy (MAE): {mae:.2f}\n")
+
+future_time = np.array([[25], [26], [27], [28], [29], [30]])
+future_pred = model.predict(future_time)
+
+print("Future Heart Rate Predictions:")
+for t, p in zip(future_time, future_pred):
+    print(f"Time {t[0]} → {p:.2f} bpm")
+
+print("\n--- Alert System ---")
+if future_pred[-1] > 110:
+    print("URGENT ALERT: High Risk Detected!")
+elif future_pred[-1] > 95:
+    print("Warning: Patient condition unstable.")
+else:
+    print("Normal Condition")
+
+print("\nAverage Heart Rate:", round(df["HeartRate"].mean(), 2))
+print("Minimum Heart Rate:", df["HeartRate"].min())
+print("Maximum Heart Rate:", df["HeartRate"].max())
+
